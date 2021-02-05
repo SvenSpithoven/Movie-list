@@ -5,11 +5,10 @@ const ulList = document.getElementById("ulList");
 const olList = document.getElementById("olList");
 
 const addGenresToDOM = async function (method, url) {
-  ulList.innerHTML = "";
-  olList.innerHTML = "";
+  clearDom(ulList, olList);
 
-  const request = await sendHttpRequest(method, url);
-  const genresArray = request.genres.map((object) => object.name);
+  const genreObjects = await sendHttpRequest(method, url);
+  const genresArray = genreObjects.genres.map((object) => object.name);
 
   genresArray.forEach((genre) => {
     let listItem = document.createElement("li");
@@ -22,22 +21,22 @@ const addGenresToDOM = async function (method, url) {
 };
 
 const addFavMovieToDOM = async function (method, url) {
-  ulList.innerHTML = "";
-  olList.innerHTML = "";
+  clearDom(ulList, olList);
 
-  const request = await sendHttpRequest(method, url);
+  const favMovie = await sendHttpRequest(method, url);
 
   let listItem = document.createElement("li");
   let p = document.createElement("p");
-  p.innerHTML = request.title;
+  p.innerHTML = favMovie.title;
   listItem.appendChild(p);
 
   let imagelink = document.createElement("a");
-  imagelink.href = "https://www.themoviedb.org/t/p/w1280" + request.poster_path;
+  imagelink.href =
+    "https://www.themoviedb.org/t/p/w1280" + favMovie.poster_path;
   let image = document.createElement("img");
-  image.src = "https://www.themoviedb.org/t/p/w1280" + request.poster_path;
-  image.alt = request.title;
-  image.title = request.title;
+  image.src = "https://www.themoviedb.org/t/p/w1280" + favMovie.poster_path;
+  image.alt = favMovie.title;
+  image.title = favMovie.title;
   imagelink.appendChild(image);
   listItem.appendChild(imagelink);
 
@@ -45,11 +44,10 @@ const addFavMovieToDOM = async function (method, url) {
 };
 
 const addTopRatedToDOM = async function (method, url) {
-  ulList.innerHTML = "";
-  olList.innerHTML = "";
+  clearDom(ulList, olList);
 
-  const request = await sendHttpRequest(method, url);
-  const topRatedArray = request.results.map((object) => object.title);
+  const topRatedObjects = await sendHttpRequest(method, url);
+  const topRatedArray = topRatedObjects.results.map((object) => object.title);
 
   topRatedArray.slice(0, 10).forEach((movie) => {
     let listItem = document.createElement("li");
@@ -60,6 +58,10 @@ const addTopRatedToDOM = async function (method, url) {
     olList.appendChild(listItem);
   });
 };
+
+function clearDom(ulList, olList) {
+  return (ulList.innerHTML = ""), (olList.innerHTML = "");
+}
 
 genresBtn.addEventListener("click", () =>
   addGenresToDOM("GET", "https://api.themoviedb.org/3/genre/movie/list")
